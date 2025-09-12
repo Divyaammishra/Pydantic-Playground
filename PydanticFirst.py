@@ -1,29 +1,31 @@
-from pydantic import BaseModel
-from typing import List, Dict
+from pydantic import BaseModel, AnyUrl, Field
+from typing import List, Dict, Optional, Annotated
 
-class Patient(BaseModel):
+class Employee(BaseModel):
     name: str
-    age: int
+    age: int = Field(gt=18, lt=60, strict=True, description='employee age should be greater than 18 and less than 60') #Data Validation, Strict will through the erro if data is invalid as Pydantic is smart to consider int in string format as int
     weight: float
-    married: bool
-    allergies: List[str]
+    married: bool = False #False is default value here
+    allergies: Annotated[Optional[List[str]], Field(default=None, max_length=5)]   #In case if you don't want to share
     contact_details: Dict[str, str]
+    linkedIn: AnyUrl #It is custome datatype to varify if the given data is valid or not - Data Validation
 
 
-def insert_patient_data(patient: Patient): #Function
-    print('name:', patient.name)
-    print('age:', patient.age)
-    print('weight:', patient.weight)
-    print('allergies:', patient.allergies)
-    print('contact_details:', patient.contact_details)
+def insert_employee_data(employee: Employee): #Function
+    print('name:', employee.name)
+    print('age:', employee.age)
+    print('weight:', employee.weight)
+    print('married:', employee.married)
+    print('allergies:', employee.allergies)
+    print('contact_details:', employee.contact_details)
     print('status:', 'inserted')
 
 
-patient_info = {'name': 'Divyam', 'age': 25, 'weight': 66, 'married': False, 'allergies': ['none'], 'contact_details': {'email': 'divyam@example.com', 'phone': '1010101010'}} #Act as databse
+employee_info = {'name': 'Divyam', 'age': 25, 'weight': 66, 'contact_details': {'email': 'divyam@example.com', 'phone': '1010101010'}, 'linkedIn': 'https://www.linkedin.com/in/mishra-divyam/'} #Act as databse
 
-patient1 = Patient(**patient_info)
+employee1 = Employee(**employee_info)
 
-insert_patient_data(patient1)
+insert_employee_data(employee1)
 
 
     
